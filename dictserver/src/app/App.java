@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
+import app.components.Dictionary;
 import app.components.DictionaryServer;
 
 public class App extends DictionaryServer implements Runnable{
@@ -16,16 +17,16 @@ public class App extends DictionaryServer implements Runnable{
     public static void main(String[] args) throws IOException {
         ServerSocket listeningSocket = null;
         Socket clientSocket = null;
+        Dictionary newDict = new Dictionary();
+        newDict.loadDictionary(args[1]);
         try{
             int port = Integer.parseInt(args[0]);
             listeningSocket = new ServerSocket(port);
-            int i=0;
             while(true){
                 System.out.println("Server listening on port "+ listeningSocket.getLocalPort() + " for a connection");
                 clientSocket = listeningSocket.accept();
-                i++;
                 App server = new App();
-                server.setSocket(clientSocket, i);
+                server.setSocket(clientSocket, newDict);
                 new Thread(server).start();
             }
         }catch(SocketException ex){
@@ -40,6 +41,7 @@ public class App extends DictionaryServer implements Runnable{
                     ioe.printStackTrace();
                 }
             }
+            newDict.saveDictionary();
         }
     }
 }
