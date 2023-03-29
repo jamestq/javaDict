@@ -14,9 +14,9 @@ public class DictionaryServer{
     private String clientID;
     private Dictionary dictionary;
 
-    public void setSocket(Socket socket, Dictionary dictionary){
+    public void setConnection(Socket socket, Dictionary dictionary){
         this.socket = socket;
-        this.clientID = String.format("Port-%s-%s ",
+        this.clientID = String.format("Port-%s-%s",
                                     this.socket.getPort(),
                                     this.socket.getInetAddress().getHostName());
         this.dictionary = dictionary;
@@ -24,18 +24,20 @@ public class DictionaryServer{
 
     public void response(){
         try{
-            System.out.printf("Server %s%n", this.clientID);
+            System.out.printf("Serving %s%n", this.clientID);
             BufferedReader userInput = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
             BufferedWriter serverOutput = new BufferedWriter(new OutputStreamWriter(this.socket.getOutputStream()));
             String clientMessage = null;
             try{
+                serverOutput.write("FROM SERVER: Connection established \n");
+                serverOutput.flush();
+                serverOutput.write("Enter command: \n");
+                serverOutput.flush();
                 while((clientMessage = userInput.readLine())!=null){
                     handleCommands(clientMessage, userInput, serverOutput);
-                    serverOutput.flush();
-                    System.out.println("Response sent");
-                    if(clientMessage.equalsIgnoreCase("exit")) break;
                 }
-                System.out.printf("Client %s connection has been closed!", this.clientID);
+                System.out.printf("Client %s connection has been closed!%n", this.clientID);
+                this.dictionary.saveDictionary();
             }catch(SocketException e){
                 System.out.println("Unexpected Socket Error");
                 e.printStackTrace();
@@ -47,37 +49,42 @@ public class DictionaryServer{
         }
     }
 
-    public void handleCommands(String command, BufferedReader input, BufferedWriter output) throws IOException{
+    public void handleCommands(String command, BufferedReader userInput, BufferedWriter serverOutput) throws IOException{
         String response = "";
         switch(command){
-            case "exit":
-                response = "Exiting server%n";
-                break;
             case "search": 
-                System.out.print("Word to search: ");
-                response = this.dictionary.searchWord(input.readLine());
+                serverOutput.write("Word to search: \n");
+                serverOutput.flush();
+                response = this.dictionary.searchWord(userInput.readLine());
                 break;
             case "add":
-                System.out.print("Word to add: ");
-                String word = input.readLine();
-                System.out.print("Meanings: ");
-                String meanings = input.readLine();
+                serverOutput.write("Word to add: \n");
+                serverOutput.flush();
+                String word = userInput.readLine();
+                serverOutput.write("Meanings to add: \n");
+                serverOutput.flush();
+                String meanings = userInput.readLine();
                 response = this.dictionary.addWord(word, meanings);
                 break;
             case "remove":
-                System.out.print("Word to remove: ");
-                response = this.dictionary.removeWord(input.readLine());
+                serverOutput.write("Word to remove \n");
+                serverOutput.flush();
+                response = this.dictionary.removeWord(userInput.readLine());
                 break;
             case "update":
-                System.out.print("Word to update: ");
-                String wordUpdate = input.readLine();
-                System.out.print("Meanings: ");
-                String meaningsUpdate = input.readLine();
+                serverOutput.write("Word to update: \n");
+                serverOutput.flush();
+                String wordUpdate = userInput.readLine();
+                serverOutput.write("Meanings to update: \n");
+                serverOutput.flush();
+                String meaningsUpdate = userInput.readLine();
                 response = this.dictionary.updateMeaning(wordUpdate, meaningsUpdate);
+                break;
             default:
-                response = "Invalid command! Try again!%n";
+                response = "Invalid command! Try again!";
         }
-        output.write(String.format(response));
+        serverOutput.write(response + "\n");
+        serverOutput.flush();
     }
 
 }

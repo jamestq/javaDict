@@ -26,7 +26,7 @@ public class App extends DictionaryServer implements Runnable{
                 System.out.println("Server listening on port "+ listeningSocket.getLocalPort() + " for a connection");
                 clientSocket = listeningSocket.accept();
                 App server = new App();
-                server.setSocket(clientSocket, newDict);
+                server.setConnection(clientSocket, newDict);
                 new Thread(server).start();
             }
         }catch(SocketException ex){

@@ -25,25 +25,27 @@ public class Dictionary {
         try{
             Scanner inputStream = new Scanner(new FileInputStream(fileName));
             loadWords(inputStream);
-            this.outputFile = fileName;
             System.out.printf("%nDictionary loaded Successfully");
             displayDictionary();
             inputStream.close();
         }catch(FileNotFoundException e){
-            System.out.println("invalid file path, creating empty default file: " + DEFAULT_OUTPUT);
+            System.out.println("empty file path, creating empty dictionary file: " + fileName);
         }
+        this.outputFile = fileName;
     }
 
-    public void saveDictionary(){
+    public synchronized void saveDictionary(){
+        System.out.println("Saving dictionary...");
         try{
             PrintWriter outputStream = new PrintWriter(new FileOutputStream(this.outputFile));
             String outputString = "";
             for(String word : wordList.keySet()){
-                String meanings = String.join(wordList.get(word).getMeanings());
+                String meanings = wordList.get(word).getMeanings();
                 outputString += word + "=" + meanings + "%n";
             }
             outputStream.printf(outputString);
             outputStream.close();
+            System.out.println("Successfully saved dictionary");
         }catch(FileNotFoundException e){
             e.printStackTrace();
         }
@@ -94,44 +96,44 @@ public class Dictionary {
     public String searchWord(String word){
         Word returnedWord = null;
         if((returnedWord = this.wordList.get(word)) != null){
-            response = String.format("Found word for %s!%nMeanings: %s%n", word, returnedWord.getMeanings());
-            System.out.printf(response);
+            response = String.format("Meanings: %s", returnedWord.getMeanings());
+            System.out.printf(response + "%n");
             return response;
         }
-        response = String.format("Error! \"%s\" does not exist!%n", word);
-        System.out.printf(response);
+        response = String.format("Error! \"%s\" does not exist!", word);
+        System.out.printf(response + "%n");
         return response;
     }
 
     public synchronized String addWord(String word, String meaningsString){
         if(meaningsString == null || meaningsString.length()==0){
-            response = "Error! Add meanings!%n";
-            System.out.printf(response);
+            response = "Error! Add meanings!";
+            System.out.printf(response + "%n");
             return response;
         }
         if(this.wordList.get(word) != null){
-            response = "Error! Word already exists! To add new meaning, use Update.%n";
-            System.out.printf(response);
+            response = "Error! Word already exists! To add new meaning, use Update.";
+            System.out.printf(response + "%n");
             return response;
         }
         ArrayList<String> meanings = processMeanings(meaningsString);
         Word newWord = new Word(word, meanings);
         wordList.put(word, newWord);
-        response = String.format("Added word %s successfully!%n",word);
-        System.out.printf(response);
+        response = String.format("Added word %s successfully!",word);
+        System.out.printf(response+"%n");
         return response;
     }
 
     public synchronized String removeWord(String word){
         if(this.wordList.get(word) == null){
-            response = String.format("This word does not exist. No action performed%n");
+            response = String.format("This word does not exist. No action performed");
             System.out.println(response);
             return response;
         }
         String meanings = this.wordList.get(word).getMeanings();
         this.wordList.remove(word);
-        response = String.format("Successfully removed word%n%s : %s", word, meanings);
-        System.out.printf(response);
+        response = String.format("Successfully removed word %s : %s", word, meanings);
+        System.out.printf(response+"%n");
         return response;
     }
 
@@ -139,18 +141,18 @@ public class Dictionary {
         Word searchWord;
         if((searchWord=wordList.get(word))!=null){
             if(meaningsString == null || meaningsString.length() == 0){
-                response = "Error! Add meaning!%n";
-                System.out.printf(response);
+                response = "Error! Add meaning!";
+                System.out.printf(response + "%n");
                 return response;
             }else{
                 searchWord.setMeanings(processMeanings(meaningsString));
-                response = "Updated meaning successfully!%n";
-                System.out.printf(response);
+                response = "Updated meaning successfully!";
+                System.out.printf(response + "%n");
                 return response;
             }
         }
         response = String.format("Error word \"%s\" not found!", word);
-        System.out.printf(response);
+        System.out.printf(response + "%n");
         return response;
     }
 
