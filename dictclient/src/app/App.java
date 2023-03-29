@@ -10,23 +10,58 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 
 public class App {
+
+    private String address;
+    private int port;
+
+    private Socket serverSocket;
+    private BufferedReader serverInput;
+    private BufferedWriter clientOutput;
+
+    public App(String address, int port){
+        this.address = address;
+        this.port = port;
+    }
+
+    public void setUp() throws UnknownHostException, IOException{
+        this.serverSocket = new Socket(this.address, this.port);
+        this.serverInput = new BufferedReader(new InputStreamReader(this.serverSocket.getInputStream()));
+        this.clientOutput = new BufferedWriter(new OutputStreamWriter(this.serverSocket.getOutputStream()));
+    }
+
+    public BufferedReader getServerInput(){
+        return this.serverInput;
+    }
+
+    public BufferedWriter getClientOutput(){
+        return this.clientOutput;
+    }
+
+    public void closeSocket() throws IOException{
+        this.serverSocket.close();
+    }
+
     public static void main(String[] args) throws IOException {
         Socket socket = null;
         try{
-            String address = args[0];
-            int port = Integer.parseInt(args[1]);
-            socket = new Socket(address, port);
-            System.out.println("Connection established");
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            App newClient = new App(args[0], Integer.parseInt(args[1]));
+            newClient.setUp();
+            
+            BufferedReader serverResponse = newClient.getServerInput();
+            String received = serverResponse.readLine();
+            System.out.println(received);
+            received = serverResponse.readLine();
+            System.out.println(received);
+
+            BufferedWriter clientOutput = newClient.getClientOutput();
             Scanner userInput = new Scanner(System.in);
             String inputStr = null;
+
             while(!(inputStr = userInput.nextLine()).equalsIgnoreCase("exit")){
-                out.write(inputStr + "\n");
-                out.flush();
-                System.out.println("Message sent");
-                String received = in.readLine();
-                System.out.println("Message received: " + received);
+                clientOutput.write(inputStr + "\n");
+                clientOutput.flush();
+                received = serverResponse.readLine();
+                System.out.println(received);
             }
             userInput.close();
         }catch(UnknownHostException e){
@@ -42,9 +77,5 @@ public class App {
                 }
             }
         }
-    }
-
-    public static void printMenu(){
-        System.out.println("continue program?");
     }
 }
