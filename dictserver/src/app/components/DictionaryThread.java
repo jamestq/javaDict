@@ -8,21 +8,25 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.SocketException;
 
-public class DictionaryServer{
+import app.helper.Utility;
+
+public class DictionaryThread{
     
     private Socket socket;
     private String clientID;
     private Dictionary dictionary;
 
-    public void setConnection(Socket socket, Dictionary dictionary){
+    private static int tokenMatchNum = 3;
+
+    public DictionaryThread(Socket socket, Dictionary dictionary){
         this.socket = socket;
+        this.dictionary = dictionary;
         this.clientID = String.format("Port-%s-%s",
                                     this.socket.getPort(),
                                     this.socket.getInetAddress().getHostName());
-        this.dictionary = dictionary;
     }
 
-    public void response(){
+    protected String runService(){
         try{
             System.out.printf("Serving %s%n", this.clientID);
             BufferedReader userInput = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
@@ -40,11 +44,19 @@ public class DictionaryServer{
                 System.out.println("Unexpected Socket Error");
                 e.printStackTrace();
             }
-            this.socket.close();
         }catch(IOException e){
             System.out.println("Unexpected IO Error while processing");
             e.printStackTrace();
+        }finally{
+            try{
+                if(this.socket!=null){
+                    this.socket.close();
+                }
+            }catch(IOException io){
+                Utility.callErrorStop(io);
+            }
         }
+        return this.clientID;
     }
 
     public void handleCommands(String clientMessage, BufferedReader userInput, BufferedWriter serverOutput) throws IOException{
@@ -71,7 +83,7 @@ public class DictionaryServer{
     }
 
     private String[] getMessageTokens(String clientMessage){
-        String[] tokens = new String[3];
+        String[] tokens = new String[tokenMatchNum];
         int tokenInd=0;
         int afterSplitterInd = 0;
         for(int i=0; i<clientMessage.length(); i++){

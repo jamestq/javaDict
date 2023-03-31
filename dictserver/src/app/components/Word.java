@@ -19,7 +19,7 @@ public class Word {
     public String getMeanings(){
         String meaningString = "";
         for(String meaning : this.meanings){
-            meaningString += meaning + ", ";
+            meaningString += meaning + ",";
         }
         return meaningString;
     }

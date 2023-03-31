@@ -59,17 +59,6 @@ public class Dictionary {
         }
     }
 
-    public void displayDictionary(){
-        System.out.printf("%n%n=========================%n%n");
-        ArrayList<String> words = new ArrayList<String>(wordList.keySet());
-        Collections.sort(words);
-        for(String word : words){
-            System.out.print(word + ": ");
-            System.out.println(wordList.get(word).getMeanings());
-        }
-        System.out.printf("%n=========================%n%n");
-    }
-
     private void processToken(String currentLine){
         for(int i=0; i<currentLine.length(); i++){
             if(currentLine.charAt(i) == '='){
@@ -91,6 +80,19 @@ public class Dictionary {
             }
         }
         return meanings;
+    }
+
+    public String displayDictionary(){
+        String displayString = "%n%n=========================%n%n";
+        ArrayList<String> words = new ArrayList<String>(wordList.keySet());
+        Collections.sort(words);
+        for(String word : words){
+            String meanings = wordList.get(word).getMeanings()+"%n";
+            displayString += word+": "+meanings;
+        }
+        displayString += "%n=========================%n%n";
+        System.out.printf(displayString);
+        return displayString;
     }
 
     public String searchWord(String word){
