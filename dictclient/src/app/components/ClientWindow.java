@@ -12,6 +12,9 @@ public class ClientWindow  extends JFrame{
 
     public ClientWindow(){
         super("Dictionary DS Client");
+    }
+
+    public void initiate(){
         setSize(DEFAULT_JFRAME_SIZE,DEFAULT_JFRAME_SIZE);
         HashMap<String, JPanel> panelMap = new HashMap<>();
         JPanel parentPanel = createPanel(panelMap);
