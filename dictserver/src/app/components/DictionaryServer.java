@@ -29,9 +29,7 @@ public class DictionaryServer{
             BufferedWriter serverOutput = new BufferedWriter(new OutputStreamWriter(this.socket.getOutputStream()));
             String clientMessage = null;
             try{
-                serverOutput.write("FROM SERVER: Connection established \n");
-                serverOutput.flush();
-                serverOutput.write("Enter command: \n");
+                serverOutput.write("Connection established \n");
                 serverOutput.flush();
                 while((clientMessage = userInput.readLine())!=null){
                     handleCommands(clientMessage, userInput, serverOutput);
@@ -49,42 +47,42 @@ public class DictionaryServer{
         }
     }
 
-    public void handleCommands(String command, BufferedReader userInput, BufferedWriter serverOutput) throws IOException{
+    public void handleCommands(String clientMessage, BufferedReader userInput, BufferedWriter serverOutput) throws IOException{
+        String[] tokens = getMessageTokens(clientMessage);
         String response = "";
-        switch(command){
+        switch(tokens[0]){
             case "search": 
-                serverOutput.write("Word to search: \n");
-                serverOutput.flush();
-                response = this.dictionary.searchWord(userInput.readLine());
+                response = this.dictionary.searchWord(tokens[1]);
                 break;
             case "add":
-                serverOutput.write("Word to add: \n");
-                serverOutput.flush();
-                String word = userInput.readLine();
-                serverOutput.write("Meanings to add: \n");
-                serverOutput.flush();
-                String meanings = userInput.readLine();
-                response = this.dictionary.addWord(word, meanings);
+                response = this.dictionary.addWord(tokens[1], tokens[2]);
                 break;
             case "remove":
-                serverOutput.write("Word to remove \n");
-                serverOutput.flush();
-                response = this.dictionary.removeWord(userInput.readLine());
+                response = this.dictionary.removeWord(tokens[1]);
                 break;
             case "update":
-                serverOutput.write("Word to update: \n");
-                serverOutput.flush();
-                String wordUpdate = userInput.readLine();
-                serverOutput.write("Meanings to update: \n");
-                serverOutput.flush();
-                String meaningsUpdate = userInput.readLine();
-                response = this.dictionary.updateMeaning(wordUpdate, meaningsUpdate);
+                response = this.dictionary.updateMeaning(tokens[1], tokens[2]);
                 break;
             default:
                 response = "Invalid command! Try again!";
         }
         serverOutput.write(response + "\n");
         serverOutput.flush();
+    }
+
+    private String[] getMessageTokens(String clientMessage){
+        String[] tokens = new String[3];
+        int tokenInd=0;
+        int afterSplitterInd = 0;
+        for(int i=0; i<clientMessage.length(); i++){
+            if(clientMessage.charAt(i)==':'){
+                tokens[tokenInd] = clientMessage.substring(afterSplitterInd, i);
+                afterSplitterInd = i+1;
+                tokenInd++;
+            }
+        }
+        tokens[tokenInd] = clientMessage.substring(afterSplitterInd);
+        return tokens;
     }
 
 }
