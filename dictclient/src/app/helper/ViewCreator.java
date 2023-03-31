@@ -1,4 +1,4 @@
-package app.components;
+package app.helper;
 
 import javax.swing.*;
 import java.awt.*;

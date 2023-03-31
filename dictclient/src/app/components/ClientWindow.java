@@ -1,6 +1,9 @@
 package app.components;
 
 import javax.swing.*;
+
+import app.helper.ViewCreator;
+
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
