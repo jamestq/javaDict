@@ -2,6 +2,8 @@ package app.components;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.HashMap;
 
 public class ClientWindow  extends JFrame{
@@ -15,6 +17,7 @@ public class ClientWindow  extends JFrame{
     }
 
     public void initiate(){
+        
         setSize(DEFAULT_JFRAME_SIZE,DEFAULT_JFRAME_SIZE);
         HashMap<String, JPanel> panelMap = new HashMap<>();
         JPanel parentPanel = createPanel(panelMap);
@@ -22,6 +25,15 @@ public class ClientWindow  extends JFrame{
         controller.setUpFunction();
         add(parentPanel);
         setVisible(true);
+
+        //Add listener to shutdown the program when the window is closed
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e){
+                System.exit(0);
+            }
+        });
+
+
     }
 
     private JPanel createPanel(HashMap<String,JPanel> panelMap){
