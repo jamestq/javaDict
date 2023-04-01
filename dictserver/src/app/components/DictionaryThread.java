@@ -80,6 +80,7 @@ public class DictionaryThread{
         }
         serverOutput.write(response + "\n");
         serverOutput.flush();
+        System.out.println("flushed");
     }
 
     private String[] getMessageTokens(String clientMessage){
