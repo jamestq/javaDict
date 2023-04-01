@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 public class ClientWindow  extends JFrame{
 
-    private static int DEFAULT_JFRAME_SIZE = 800;
+    private static int DEFAULT_JFRAME_SIZE = 900;
 
     JPanel parentPanel;
 
@@ -50,10 +50,10 @@ public class ClientWindow  extends JFrame{
 
     private JPanel createControlPanel(HashMap<String,JPanel> panelMap){
 
-        JPanel connectionPanel = ViewCreator.createTwoOnePanel("hostname", "port", "Connect to Server");
+        JPanel connectionPanel = ViewCreator.createTwoOnePanel("hostname", "port", "Connect to Server", false);
         JPanel searchWordPanel = ViewCreator.createOneOnePanel("", true, "Search for meaning");
-        JPanel addWordPanel = ViewCreator.createTwoOnePanel("word", "meanings", "Add word to Dictionary");
-        JPanel updateWordPanel = ViewCreator.createTwoOnePanel("word", "meanings", "Update word");
+        JPanel addWordPanel = ViewCreator.createTwoOnePanel("word", "meanings", "Add word to Dictionary", true);
+        JPanel updateWordPanel = ViewCreator.createTwoOnePanel("word", "meanings", "Update word", true);
         JPanel deleteWordPanel = ViewCreator.createOneOnePanel("", true, "Delete word");
 
         panelMap.put("connectionPanel", connectionPanel);

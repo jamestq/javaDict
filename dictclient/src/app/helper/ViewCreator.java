@@ -13,92 +13,95 @@ public class ViewCreator {
     private static Dimension DEFAULT_DIMENSION_TEXT_AREA = new Dimension(W_WIDTH, W_HEIGHT_TEXT_AREA);
     private static Dimension DEFAULT_DIMENSION_BUTTON = new Dimension(W_WIDTH_BUTTON, W_HEIGHT);
 
-    public static JPanel createTwoOnePanel(String fieldDes1, String fieldDes2, String buttonDes){
+    public static JPanel createTwoOnePanel(String fieldDes1, String fieldDes2, String buttonDes, boolean setTextArea){
+        
         JPanel parentPanel = new JPanel(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
-        constraints.insets = new Insets(5, 5, 5, 5);
+        constraints.insets = new Insets(0, 0, 2, 0);
 
-        // add the first label and text field
         JLabel label1 = new JLabel(fieldDes1);
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        constraints.anchor = GridBagConstraints.LINE_END;
+        setConstraints(constraints, 0, 0, false, 0);
         parentPanel.add(label1, constraints);
-
         JTextField textField1 = createTextField("", true);
-        constraints.gridx = 1;
-        constraints.gridy = 0;
-        constraints.anchor = GridBagConstraints.LINE_START;
+        setConstraints(constraints, 1, 0, false, 0);
         parentPanel.add(textField1, constraints);
 
-        // add the second label and text field
         JLabel label2 = new JLabel(fieldDes2);
-        constraints.gridx = 0;
-        constraints.gridy = 1;
-        constraints.anchor = GridBagConstraints.LINE_END;
+        setConstraints(constraints, 0, 1, false, 0);
         parentPanel.add(label2, constraints);
 
-        JTextField textField2 = createTextField("", true);
-        constraints.gridx = 1;
-        constraints.gridy = 1;
-        constraints.anchor = GridBagConstraints.LINE_START;
-        parentPanel.add(textField2, constraints);
+        setConstraints(constraints, 1, 1, false, 0);
+        if(setTextArea){
+            JTextArea textArea2 = createTextArea("", true);
+            parentPanel.add(textArea2, constraints);
+        }else{
+            JTextField textField2 = createTextField("", true);
+            parentPanel.add(textField2, constraints);
+        }
 
         // add the button
         JButton button = createButton(buttonDes);
-        constraints.gridx = 0;
-        constraints.gridy = 2;
+        setConstraints(constraints, 0, 2, false, 0);
         constraints.gridwidth = 2;
         constraints.anchor = GridBagConstraints.CENTER;
         parentPanel.add(button, constraints);
         return parentPanel;
     }
 
-    public static JPanel createOnePanel(String fieldDes, boolean editable){
-        JPanel parentPanel = new JPanel(new BorderLayout());
-        JLabel label = new JLabel(fieldDes);
-        JTextArea textArea = createTextArea("", editable);
-        parentPanel.add(label, BorderLayout.NORTH);
-        parentPanel.add(textArea, BorderLayout.CENTER);
-        return parentPanel;
-    }
-
     public static JPanel createOneOnePanel(String fieldDes1, boolean editable, String buttonDes){
+        
         JPanel panel = new JPanel(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
-        JTextField textField = createTextField(fieldDes1, editable);
+        GridBagConstraints constraints = new GridBagConstraints();
+
+        JTextArea textField = createTextArea(fieldDes1, editable);
+        setConstraints(constraints, 0, 0, true, GridBagConstraints.HORIZONTAL);
+        panel.add(textField, constraints);
+
         JButton button = createButton(buttonDes);
-        c.gridx = 0;
-        c.gridy = 0;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = new Insets(5, 5, 5, 5);
-        panel.add(textField, c);
-        c.gridx = 0;
-        c.gridy = 1;
-        c.fill = GridBagConstraints.NONE;
-        c.insets = new Insets(10, 5, 5, 5);
-        panel.add(button, c);
+        setConstraints(constraints, 0, 1, false, 0);
+        panel.add(button, constraints);
+
         return panel;
     }
 
-    public static JTextField createTextField(String text, boolean editable){
+    public static JPanel createOnePanel(String fieldDes, boolean editable){
+
+        JPanel parentPanel = new JPanel(new BorderLayout());
+        
+        JLabel label = new JLabel(fieldDes);
+        JTextArea textArea = createTextArea("", editable);
+        
+        parentPanel.add(label, BorderLayout.NORTH);
+        parentPanel.add(textArea, BorderLayout.CENTER);
+        parentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 20));
+        
+        return parentPanel;
+    }
+
+    private static JTextField createTextField(String text, boolean editable){
         JTextField textField = new JTextField(text);
         textField.setPreferredSize(DEFAULT_DIMENSION_TEXT);
         textField.setEditable(editable);
         return textField;
     }
 
-    public static JTextArea createTextArea(String text, boolean editable){
+    private static JTextArea createTextArea(String text, boolean editable){
         JTextArea textArea = new JTextArea(text);
         textArea.setPreferredSize(DEFAULT_DIMENSION_TEXT_AREA);
         textArea.setEditable(editable);
+        textArea.setLineWrap(true);
         return textArea;
     }
 
-    public static JButton createButton(String name){
+    private static JButton createButton(String name){
         JButton button = new JButton(name);
         button.setPreferredSize(DEFAULT_DIMENSION_BUTTON);
         return button;
     }
-    
+
+    private static void setConstraints(GridBagConstraints constraints, int x, int y, boolean isFill, int fill){
+        constraints.gridx = x;
+        constraints.gridy = y; 
+        if(isFill) constraints.fill = fill;
+    }
 }

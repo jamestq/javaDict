@@ -17,9 +17,14 @@ public class GUIFunction {
     private BufferedReader serverResponse;
     private BufferedWriter clientInput;
     private Socket serverSocket;
+    private boolean isConnected = false;
 
     public void connect(JPanel connectionPanel, JPanel connectionStatus){
-        JTextField statusField = (JTextField) connectionStatus.getComponent(0);
+        JTextArea statusField = (JTextArea) connectionStatus.getComponent(0);
+        if(this.isConnected){
+            statusField.setText("Client is already connected. Disconnect first!");
+            return;  
+        } 
         try{
             int port = Integer.parseInt(((JTextField) connectionPanel.getComponent(3)).getText());
             String address = ((JTextField) connectionPanel.getComponent(1)).getText();
@@ -29,6 +34,7 @@ public class GUIFunction {
                 this.clientInput = new BufferedWriter(new OutputStreamWriter(serverSocket.getOutputStream()));
                 String received = this.serverResponse.readLine();
                 statusField.setText(received);
+                this.isConnected = true;
             }catch(UnknownHostException error){
                 statusField.setText("Host not found!");
                 error.printStackTrace();
@@ -46,7 +52,7 @@ public class GUIFunction {
     }
 
     public void disconnect(JPanel connectionStatus){
-        JTextField statusField = (JTextField) connectionStatus.getComponent(0);
+        JTextArea statusField = (JTextArea) connectionStatus.getComponent(0);
         if(this.serverSocket!=null){
             try{
                 this.serverSocket.close();
@@ -56,22 +62,16 @@ public class GUIFunction {
                 e.printStackTrace();
             }
         }
+        this.isConnected = false;
     }
 
     public void search(JPanel searchWordPanel, JPanel wordSearchResult){
-        JTextField searchField = (JTextField) searchWordPanel.getComponent(0);
+        JTextArea searchField = (JTextArea) searchWordPanel.getComponent(0);
         JTextArea resultField = (JTextArea) wordSearchResult.getComponent(1);
         try{
             String searchString = searchField.getText();
-            try{
-                this.clientInput.write("search:"+searchString+"\n");
-                this.clientInput.flush();
-                String receivedString = this.serverResponse.readLine();
-                resultField.setText(receivedString);
-            }catch(IOException e){
-                resultField.setText(e.getMessage());
-                e.printStackTrace();
-            }
+            String message = "search:"+searchString+"\n";
+            processComms(message, resultField);
         }catch(NullPointerException e){
             resultField.setText("empty search field. Please try again");
         }
@@ -79,19 +79,12 @@ public class GUIFunction {
 
     public void add(JPanel addWordPanel, JPanel wordAddResult){
         JTextField wordField = (JTextField) addWordPanel.getComponent(1);
-        JTextField meaningsField = (JTextField) addWordPanel.getComponent(3);
+        JTextArea meaningsField = (JTextArea) addWordPanel.getComponent(3);
         JTextArea resultField = (JTextArea) wordAddResult.getComponent(1);
         try{
             String addString = wordField.getText() + ":" + meaningsField.getText();
-            try{
-                this.clientInput.write("add:"+addString+"\n");
-                this.clientInput.flush();
-                String receivedString = this.serverResponse.readLine();
-                resultField.setText(receivedString);
-            }catch(IOException e){
-                resultField.setText(e.getMessage());
-                e.printStackTrace();
-            }
+            String message = "add:"+addString+"\n";
+            processComms(message, resultField);
         }catch(NullPointerException e){
             resultField.setText("empty word/meanings field. Please try again");
         }
@@ -99,41 +92,51 @@ public class GUIFunction {
 
     public void update(JPanel updateWordPanel, JPanel wordUpdateResult){
         JTextField wordField = (JTextField) updateWordPanel.getComponent(1);
-        JTextField meaningsField = (JTextField) updateWordPanel.getComponent(3);
+        JTextArea meaningsField = (JTextArea) updateWordPanel.getComponent(3);
         JTextArea resultField = (JTextArea) wordUpdateResult.getComponent(1);
         try{
             String addString = wordField.getText() + ":" + meaningsField.getText();
-            try{
-                this.clientInput.write("update:"+addString+"\n");
-                this.clientInput.flush();
-                String receivedString = this.serverResponse.readLine();
-                resultField.setText(receivedString);
-            }catch(IOException e){
-                resultField.setText(e.getMessage());
-                e.printStackTrace();
-            }
+            String message = "update:"+addString+"\n";
+            processComms(message, resultField);
         }catch(NullPointerException e){
             resultField.setText("empty word/meanings field. Please try again");
         }
     }
 
     public void delete(JPanel deleteWordPanel, JPanel wordDeleteResult){
-        JTextField searchField = (JTextField) deleteWordPanel.getComponent(0);
+        JTextArea deleteField = (JTextArea) deleteWordPanel.getComponent(0);
         JTextArea resultField = (JTextArea) wordDeleteResult.getComponent(1);
         try{
-            String searchString = searchField.getText();
-            try{
-                this.clientInput.write("remove:"+searchString+"\n");
-                this.clientInput.flush();
-                String receivedString = this.serverResponse.readLine();
-                resultField.setText(receivedString);
-            }catch(IOException e){
-                resultField.setText(e.getMessage());
-                e.printStackTrace();
-            }
+            String searchString = deleteField.getText();
+            String message = "remove:"+searchString+"\n";
+            processComms(message, resultField);
         }catch(NullPointerException e){
             resultField.setText("empty delete field. Please try again");
         }
     }
 
+    private void processComms(String message, JTextArea resultField){
+        try{
+            sendMessage(message);
+            setResponse(resultField);
+        }catch(IOException e){
+            resultField.setText(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void sendMessage(String message) throws IOException{
+        System.out.println(message);
+        this.clientInput.write(message);
+        this.clientInput.flush();
+    }
+
+    private void setResponse(JTextArea textArea) throws IOException{
+        String receiveString = "";
+        do{
+            receiveString += this.serverResponse.readLine() + "\n";
+        }while(this.serverResponse.ready());
+        textArea.setText("");
+        textArea.setText(receiveString);
+    }
 }
