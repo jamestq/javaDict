@@ -44,8 +44,8 @@ public class GUIFunction {
             return;  
         } 
         try{
-            int port = Integer.parseInt(((JTextField) connectionPanel.getComponent(3)).getText());
-            String address = ((JTextField) connectionPanel.getComponent(1)).getText();
+            int port = Integer.parseInt(((JTextField) connectionPanel.getComponent(3)).getText().trim());
+            String address = ((JTextField) connectionPanel.getComponent(1)).getText().trim();
             try{
                 this.serverSocket = new Socket(address, port);
                 this.serverResponse = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
@@ -82,7 +82,7 @@ public class GUIFunction {
         JTextArea searchField = (JTextArea) searchWordPanel.getComponent(0);
         JTextArea resultField = (JTextArea) wordSearchResult.getComponent(1);
         try{
-            String searchString = searchField.getText();
+            String searchString = searchField.getText().trim();
             searchField.setText("");
             String message = "search:"+searchString+"\n";
             processComms(message, resultField);
@@ -96,7 +96,7 @@ public class GUIFunction {
         JTextArea meaningsField = (JTextArea) addWordPanel.getComponent(3);
         JTextArea resultField = (JTextArea) wordAddResult.getComponent(1);
         try{
-            String addString = wordField.getText() + ":" + meaningsField.getText();
+            String addString = wordField.getText().trim() + ":" + meaningsField.getText().trim();
             wordField.setText(""); meaningsField.setText("");
             String message = "add:"+addString+"\n";
             processComms(message, resultField);
@@ -110,9 +110,9 @@ public class GUIFunction {
         JTextArea meaningsField = (JTextArea) updateWordPanel.getComponent(3);
         JTextArea resultField = (JTextArea) wordUpdateResult.getComponent(1);
         try{
-            String addString = wordField.getText() + ":" + meaningsField.getText();
+            String updateString = wordField.getText().trim() + ":" + meaningsField.getText().trim();
             wordField.setText(""); meaningsField.setText("");
-            String message = "update:"+addString+"\n";
+            String message = "update:"+updateString+"\n";
             processComms(message, resultField);
         }catch(NullPointerException e){
             resultField.setText(reportError("Empty word/meanings field. Please try again.", e));
@@ -123,9 +123,9 @@ public class GUIFunction {
         JTextArea deleteField = (JTextArea) deleteWordPanel.getComponent(0);
         JTextArea resultField = (JTextArea) wordDeleteResult.getComponent(1);
         try{
-            String searchString = deleteField.getText();
+            String deleteString = deleteField.getText().trim();
             deleteField.setText("");
-            String message = "remove:"+searchString+"\n";
+            String message = "remove:"+deleteString+"\n";
             processComms(message, resultField);
         }catch(NullPointerException e){
             resultField.setText(reportError("Empty delete field. Please try again.", e));
