@@ -1,3 +1,9 @@
+/**
+ * Name: Uy Thinh Quang
+ * Surname: Quang
+ * StudentID: 1025981
+ */
+
 package app;
 
 import app.components.ClientWindow;

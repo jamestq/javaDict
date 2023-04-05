@@ -1,7 +1,23 @@
+/**
+ * Name: Uy Thinh Quang
+ * Surname: Quang
+ * StudentID: 1025981
+ */
+
 package app.helper;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JTextField;
+import javax.swing.JTextArea;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.BorderFactory;
+
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Dimension;
+import java.awt.BorderLayout;
+import java.awt.Insets;
 
 public class ViewCreator {
 
@@ -13,7 +29,7 @@ public class ViewCreator {
     private static Dimension DEFAULT_DIMENSION_TEXT_AREA = new Dimension(W_WIDTH, W_HEIGHT_TEXT_AREA);
     private static Dimension DEFAULT_DIMENSION_BUTTON = new Dimension(W_WIDTH_BUTTON, W_HEIGHT);
 
-    public static JPanel createTwoOnePanel(String fieldDes1, String fieldDes2, String buttonDes, boolean setTextArea){
+    public JPanel createTwoOnePanel(String fieldDes1, String fieldDes2, String buttonDes, boolean setTextArea){
         
         JPanel parentPanel = new JPanel(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
@@ -48,7 +64,7 @@ public class ViewCreator {
         return parentPanel;
     }
 
-    public static JPanel createOneOnePanel(String fieldDes1, boolean editable, String buttonDes){
+    public JPanel createOneOnePanel(String fieldDes1, boolean editable, String buttonDes){
         
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
@@ -64,7 +80,7 @@ public class ViewCreator {
         return panel;
     }
 
-    public static JPanel createOnePanel(String fieldDes, boolean editable){
+    public JPanel createOnePanel(String fieldDes, boolean editable){
 
         JPanel parentPanel = new JPanel(new BorderLayout());
         
@@ -78,14 +94,14 @@ public class ViewCreator {
         return parentPanel;
     }
 
-    private static JTextField createTextField(String text, boolean editable){
+    private JTextField createTextField(String text, boolean editable){
         JTextField textField = new JTextField(text);
         textField.setPreferredSize(DEFAULT_DIMENSION_TEXT);
         textField.setEditable(editable);
         return textField;
     }
 
-    private static JTextArea createTextArea(String text, boolean editable){
+    private JTextArea createTextArea(String text, boolean editable){
         JTextArea textArea = new JTextArea(text);
         textArea.setPreferredSize(DEFAULT_DIMENSION_TEXT_AREA);
         textArea.setEditable(editable);
@@ -93,13 +109,13 @@ public class ViewCreator {
         return textArea;
     }
 
-    private static JButton createButton(String name){
+    private JButton createButton(String name){
         JButton button = new JButton(name);
         button.setPreferredSize(DEFAULT_DIMENSION_BUTTON);
         return button;
     }
 
-    private static void setConstraints(GridBagConstraints constraints, int x, int y, boolean isFill, int fill){
+    private void setConstraints(GridBagConstraints constraints, int x, int y, boolean isFill, int fill){
         constraints.gridx = x;
         constraints.gridy = y; 
         if(isFill) constraints.fill = fill;

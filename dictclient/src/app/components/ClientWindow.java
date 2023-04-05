@@ -1,26 +1,37 @@
+/**
+ * Name: Uy Thinh Quang
+ * Surname: Quang
+ * StudentID: 1025981
+ */
+
 package app.components;
 
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import app.helper.ViewCreator;
 
-import java.awt.*;
+import java.awt.GridLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
 import java.util.HashMap;
 
 public class ClientWindow  extends JFrame{
 
     private static int DEFAULT_JFRAME_SIZE = 900;
+    private ViewCreator creator;
 
     JPanel parentPanel;
 
     public ClientWindow(){
         super("Dictionary DS Client");
+        this.creator = new ViewCreator();
     }
 
     public void initiate(){
         setSize(DEFAULT_JFRAME_SIZE,DEFAULT_JFRAME_SIZE);
+
         JPanel parentPanel = createPanels();
         add(parentPanel);
         //Add listener to shutdown the program when the window is closed
@@ -50,11 +61,11 @@ public class ClientWindow  extends JFrame{
 
     private JPanel createControlPanel(HashMap<String,JPanel> panelMap){
 
-        JPanel connectionPanel = ViewCreator.createTwoOnePanel("hostname", "port", "Connect to Server", false);
-        JPanel searchWordPanel = ViewCreator.createOneOnePanel("", true, "Search for meaning");
-        JPanel addWordPanel = ViewCreator.createTwoOnePanel("word", "meanings", "Add word to Dictionary", true);
-        JPanel updateWordPanel = ViewCreator.createTwoOnePanel("word", "meanings", "Update word", true);
-        JPanel deleteWordPanel = ViewCreator.createOneOnePanel("", true, "Delete word");
+        JPanel connectionPanel = creator.createTwoOnePanel("hostname", "port", "Connect to Server", false);
+        JPanel searchWordPanel = creator.createOneOnePanel("", true, "Search for meaning");
+        JPanel addWordPanel = creator.createTwoOnePanel("word", "meanings", "Add word to Dictionary", true);
+        JPanel updateWordPanel = creator.createTwoOnePanel("word", "meanings", "Update word", true);
+        JPanel deleteWordPanel = creator.createOneOnePanel("", true, "Delete word");
 
         panelMap.put("connectionPanel", connectionPanel);
         panelMap.put("searchWordPanel", searchWordPanel);
@@ -74,11 +85,11 @@ public class ClientWindow  extends JFrame{
 
     private JPanel createResultPanel(HashMap<String, JPanel> panelMap){
 
-        JPanel connectionStatus = ViewCreator.createOneOnePanel("Disconnected", false, "Disconnect");
-        JPanel wordSearchResult = ViewCreator.createOnePanel("Search Result", false);
-        JPanel wordAddResult = ViewCreator.createOnePanel("Add Result", false);
-        JPanel wordUpdateResult = ViewCreator.createOnePanel("Update Result", false);
-        JPanel wordDeleteResult = ViewCreator.createOnePanel("Delete Result", false);
+        JPanel connectionStatus = creator.createOneOnePanel("Disconnected", false, "Disconnect");
+        JPanel wordSearchResult = creator.createOnePanel("Search Result", false);
+        JPanel wordAddResult = creator.createOnePanel("Add Result", false);
+        JPanel wordUpdateResult = creator.createOnePanel("Update Result", false);
+        JPanel wordDeleteResult = creator.createOnePanel("Delete Result", false);
 
         panelMap.put("connectionStatus", connectionStatus);
         panelMap.put("wordSearchResult", wordSearchResult);
