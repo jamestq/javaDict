@@ -72,7 +72,7 @@ public class GUIFunction {
                 this.serverSocket.close();
                 statusField.setText("Disconnected");
             }catch(IOException e){
-                statusField.setText(reportError("Something went wrong. Refer to the console for further details", e));
+                statusField.setText(reportError("Something went wrong.", e));
             }
         }
         this.isConnected = false;
