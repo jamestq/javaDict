@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 
 import app.helper.Utility;
 
@@ -16,7 +17,8 @@ public class DictionaryThread{
     private String clientID;
     private Dictionary dictionary;
 
-    private static int tokenMatchNum = 3;
+    private static int TOKEN_MATCH_NUM = 3;
+    private static int MAX_IDLE_TIME = 15000;
 
     public DictionaryThread(Socket socket, Dictionary dictionary){
         this.socket = socket;
@@ -28,6 +30,7 @@ public class DictionaryThread{
 
     protected String runService(){
         try{
+            this.socket.setSoTimeout(MAX_IDLE_TIME);
             System.out.printf("Serving %s%n", this.clientID);
             BufferedReader userInput = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
             BufferedWriter serverOutput = new BufferedWriter(new OutputStreamWriter(this.socket.getOutputStream()));
@@ -43,23 +46,29 @@ public class DictionaryThread{
             }catch(SocketException e){
                 System.out.println("Unexpected Socket Error");
                 e.printStackTrace();
+            }catch(SocketTimeoutException ste){
+                serverOutput.write("timeout\n");
+                serverOutput.flush();
+                System.out.println(ste.getLocalizedMessage());
             }
+            userInput.close();
+            serverOutput.close();
         }catch(IOException e){
             System.out.println("Unexpected IO Error while processing");
-            e.printStackTrace();
+            e.printStackTrace();           
         }finally{
             try{
                 if(this.socket!=null){
                     this.socket.close();
                 }
             }catch(IOException io){
-                Utility.callErrorStop(io);
+                Utility.callErrorStop(io,1);
             }
         }
         return this.clientID;
     }
 
-    public void handleCommands(String clientMessage, BufferedReader userInput, BufferedWriter serverOutput) throws IOException{
+    private void handleCommands(String clientMessage, BufferedReader userInput, BufferedWriter serverOutput) throws IOException{
         String[] tokens = getMessageTokens(clientMessage);
         String response = "";
         switch(tokens[0]){
@@ -75,16 +84,18 @@ public class DictionaryThread{
             case "update":
                 response = this.dictionary.updateMeaning(tokens[1], tokens[2]);
                 break;
+            case "":
+                response = "";
+                break;
             default:
                 response = "Invalid command! Try again!";
         }
         serverOutput.write(response + "\n");
         serverOutput.flush();
-        System.out.println("flushed");
     }
 
     private String[] getMessageTokens(String clientMessage){
-        String[] tokens = new String[tokenMatchNum];
+        String[] tokens = new String[TOKEN_MATCH_NUM];
         int tokenInd=0;
         int afterSplitterInd = 0;
         for(int i=0; i<clientMessage.length(); i++){

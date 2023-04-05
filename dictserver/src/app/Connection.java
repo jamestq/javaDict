@@ -4,12 +4,15 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 
 import app.components.Dictionary;
 import app.components.DictionaryThread;
 import app.helper.Utility;
 
 public class Connection extends DictionaryThread implements Runnable{
+
+    private static int MAX_IDLE_TIME = 900000;
 
     public Connection(Socket socket, Dictionary dictionary){
         super(socket, dictionary);
@@ -23,21 +26,28 @@ public class Connection extends DictionaryThread implements Runnable{
     public static void main(String[] args) throws IOException {
         ServerSocket listeningSocket = null;
         Dictionary newDict = setUpDictionary(args);
+        int idleTime=MAX_IDLE_TIME;
+        //code snippet for manipulating the server runtime
+        if(args.length==3) idleTime = Integer.parseInt(args[2]);
         try{
             listeningSocket = setUpSocket(args);
+            listeningSocket.setSoTimeout(idleTime);
             while(true){
                 acceptClient(listeningSocket, newDict);
             }
         }catch(SocketException se){
-            Utility.callErrorStop(se);
+            Utility.callErrorStop(se,1);
+        }catch(SocketTimeoutException ste){ 
+            Utility.callErrorStop(ste,1);
         }finally{
+            System.out.println("Cleaning up");
             if(listeningSocket!=null){
                 try{
                     listeningSocket.close();
                 }catch(SocketException se){
-                    Utility.callErrorStop(se);
+                    Utility.callErrorStop(se,1);
                 }catch(IOException io){
-                    Utility.callErrorStop(io);
+                    Utility.callErrorStop(io,1);
                 }
             }
             newDict.saveDictionary();
@@ -60,7 +70,7 @@ public class Connection extends DictionaryThread implements Runnable{
             newDict.loadDictionary(fileName);
             return newDict;
         }catch(IndexOutOfBoundsException ie){
-            Utility.callErrorStop(ie);
+            Utility.callErrorStop(ie,0);
         }
         return null;
     }
@@ -70,9 +80,9 @@ public class Connection extends DictionaryThread implements Runnable{
             int port = Integer.parseInt(args[0]);
             return new ServerSocket(port);
         }catch(NumberFormatException nbe){
-            Utility.callErrorStop(nbe);
+            Utility.callErrorStop(nbe, 0);
         }catch(IndexOutOfBoundsException ie){
-            Utility.callErrorStop(ie);
+            Utility.callErrorStop(ie, 0);
         }
         return null;
     }

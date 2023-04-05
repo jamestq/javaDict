@@ -1,9 +1,9 @@
 package app.helper;
 
 public class Utility {
-    public static void callErrorStop(Exception e){
+    public static void callErrorStop(Exception e, int exitCode){
         System.out.println(e.getMessage());
         e.printStackTrace();
-        System.exit(1);
+        if(exitCode==0) System.exit(exitCode);
     }
 }
