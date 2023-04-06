@@ -42,7 +42,6 @@ public class DictionaryThread{
                     handleCommands(clientMessage, userInput, serverOutput);
                 }
                 System.out.printf("Client %s connection has been closed!%n", this.clientID);
-                this.dictionary.saveDictionary();
             }catch(SocketException e){
                 System.out.println("Unexpected Socket Error");
                 e.printStackTrace();
@@ -50,9 +49,11 @@ public class DictionaryThread{
                 serverOutput.write("timeout\n");
                 serverOutput.flush();
                 System.out.println(ste.getLocalizedMessage());
+            }finally{
+                this.dictionary.saveDictionary();
+                userInput.close();
+                serverOutput.close();
             }
-            userInput.close();
-            serverOutput.close();
         }catch(IOException e){
             System.out.println("Unexpected IO Error while processing");
             e.printStackTrace();           
