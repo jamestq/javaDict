@@ -1,4 +1,4 @@
-# Java Dictionary Project with Client and Server Files
+## Java Dictionary Project with Client and Server Files
 
 Refer to the individual project folders' README for the build steps
 
