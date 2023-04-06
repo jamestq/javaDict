@@ -9,3 +9,5 @@ To build the program run the following:
 javac -d bin src/app/*.java src/app/*/*.java
 java -cp bin app.Connection <port> <filepath>
 ```
+
+A sample `words.data` file is included for loading
