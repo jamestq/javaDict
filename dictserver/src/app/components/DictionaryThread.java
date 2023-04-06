@@ -18,7 +18,7 @@ public class DictionaryThread{
     private Dictionary dictionary;
 
     private static int TOKEN_MATCH_NUM = 3;
-    private static int MAX_IDLE_TIME = 15000;
+    private static int MAX_IDLE_TIME = 30000;
 
     public DictionaryThread(Socket socket, Dictionary dictionary){
         this.socket = socket;
