@@ -96,6 +96,11 @@ public class Dictionary {
     }
 
     public String searchWord(String word){
+        if(word.isEmpty()){
+            response = String.format("Error! empty word!");
+            System.out.printf(response+"\n");
+            return response;
+        }
         Word returnedWord = null;
         if((returnedWord = this.wordList.get(word)) != null){
             response = String.format("%s\nMeanings: \n%s", word, returnedWord.getMeanings());
@@ -108,6 +113,11 @@ public class Dictionary {
     }
 
     public synchronized String addWord(String word, String meaningsString){
+        if(word.isEmpty()){
+            response = String.format("Error! empty word!");
+            System.out.printf(response+"\n");
+            return response;
+        }
         if(meaningsString == null || meaningsString.length()==0){
             response = String.format("Error! Add meanings to %s!", word);
             System.out.printf(response + "\n");
@@ -127,8 +137,13 @@ public class Dictionary {
     }
 
     public synchronized String removeWord(String word){
+        if(word.isEmpty()){
+            response = String.format("Error! empty word!");
+            System.out.printf(response+"\n");
+            return response;
+        }
         if(this.wordList.get(word) == null){
-            response = String.format("\"%s\" does not exist. No action performed");
+            response = String.format("\"%s\" does not exist. No action performed", word);
             System.out.println(response);
             return response;
         }
@@ -141,6 +156,11 @@ public class Dictionary {
 
     public synchronized String updateMeaning(String word, String meaningsString){
         Word searchWord;
+        if(word.isEmpty()){
+            response = String.format("Error! empty word!");
+            System.out.printf(response+"\n");
+            return response;
+        }
         if((searchWord=wordList.get(word))!=null){
             if(meaningsString == null || meaningsString.length() == 0){
                 response = String.format("Error! Add meaning to \"%s\"!", word);
