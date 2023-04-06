@@ -15,6 +15,11 @@ import java.awt.GridLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+/**
+ * Name: Uy Thinh Quang
+ * Surname: Quang
+ * StudentID: 1025981
+ */
 import java.util.HashMap;
 
 public class ClientWindow  extends JFrame{
