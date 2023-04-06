@@ -15,7 +15,6 @@ import java.net.Socket;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.HashMap;
 
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
@@ -28,13 +27,6 @@ public class GUIFunction {
     private Socket serverSocket;
     private boolean isConnected = false;
     private JTextArea statusField;
-
-    public void checkSocketClosed(HashMap<String,JPanel> panels){
-        if(isConnected || this.serverSocket!=null){
-            processComms("", (JTextArea) panels.get("connectionStatus").getComponent(0));
-        }
-        System.out.println("");
-    }
 
     public void connect(JPanel connectionPanel, JPanel connectionStatus){
         statusField = (JTextArea) connectionStatus.getComponent(0);
@@ -150,6 +142,7 @@ public class GUIFunction {
     private void setResponse(JTextArea textArea) throws IOException{
         String outputString = "";
         String receiveString = "";
+        textArea.setText("");
         do{ 
             receiveString = this.serverResponse.readLine();
             if(receiveString.equalsIgnoreCase("timeout")){
@@ -160,7 +153,7 @@ public class GUIFunction {
             }
             outputString += receiveString + "\n";
         }while(this.serverResponse.ready());
-        textArea.setText("");
+        
         textArea.setText(outputString);
     }
 
